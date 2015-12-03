@@ -1,0 +1,61 @@
+html , body {
+  font-family: 'Arial', sans-serif;
+  /*font-family: 'Roboto', sans-serif;*/
+  text-align: center;
+  color: white;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background:hsl(0, 0%, 95%);
+}
+
+.landing-welcome {
+  position: relative;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  width: 100%;
+  height: 100px;
+  margin-bottom: 5px;
+  font-size: 2em;
+  background: hsl(135, 40%, 40%);
+  box-shadow: 0 0 3px hsla(0,0%,10%,0.5);
+}
+.landing-welcome > header {
+ font-size: 2.2em;
+ text-shadow: 0 2px 3px #9e9e9e;
+}
+
+.main {
+  box-sizing: border-box;
+  margin: 5px auto;
+  overflow: auto;
+  width:96%;
+}
+.main > grid-host > .nine {
+  margin-right:8px;
+  margin-bottom: 10px;
+}
+.content {
+  box-sizing: border-box;
+  width: 100%;
+  height: 500px;
+  padding: 5px;
+  background: hsl(120, 0%, 28%);
+  border-radius: 2px;
+}
+.side-content {
+  box-sizing: border-box;
+  display: inline-block;
+  text-align: left;
+  padding: 0 5px 0 5px;
+  width: 100%;
+  background: hsl(120, 0%, 28%);
+  border-radius: 2px;
+}
+.side-content > header {
+  text-align: center;
+  font-size: 1.1em;
+}

@@ -1,0 +1,31 @@
+{
+  "name": "craftcode.xyz",
+  "version": "0.0.1",
+  "description": "personal portfolio/blog",
+  "main": "craftcode.xyz.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SaulDoesCode/craftcode.xyz.git"
+  },
+  "keywords": [
+    "portfolio",
+    "crafter.js",
+    "blog",
+    "code",
+    "tech"
+  ],
+  "author": "Saul van der Walt",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/SaulDoesCode/craftcode.xyz/issues"
+  },
+  "homepage": "https://github.com/SaulDoesCode/craftcode.xyz#readme",
+  "devDependencies": {
+    "browser-sync": "^2.10.0",
+    "gulp": "^3.9.0",
+    "gulp-go": "^1.1.0"
+  }
+}
