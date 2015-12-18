@@ -1,61 +1,122 @@
-html , body {
-  font-family: 'Arial', sans-serif;
-  /*font-family: 'Roboto', sans-serif;*/
+@font-face {
+    font-family: Roboto;
+    src: url('/fonts/Roboto/Roboto-Regular.ttf');
+}
+* {
+  box-sizing: border-box;
+}
+html, body {
+  /*font-family: 'Arial', sans-serif;*/
+  font-family: Roboto;
   text-align: center;
   color: white;
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  background:hsl(0, 0%, 95%);
+  background: hsl(0, 0%, 95%);
 }
-
-.landing-welcome {
+top-bar {
   position: relative;
-  display: flex;
-  align-items: center;
-  align-content: center;
-  justify-content: center;
+  display: block;
   width: 100%;
-  height: 100px;
+  height:5cm;
   margin-bottom: 5px;
-  font-size: 2em;
-  background: hsl(135, 40%, 40%);
-  box-shadow: 0 0 3px hsla(0,0%,10%,0.5);
+  background:hsl(0, 0%, 25%);
+  box-shadow: 0 0 3px hsla(0, 0%, 10%, 0.5);
 }
-.landing-welcome > header {
- font-size: 2.2em;
- text-shadow: 0 2px 3px #9e9e9e;
+top-bar > nav {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: 10mm;
+  width: 100%;
+  background: #fff;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
-
+nav > nav-item {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  float:right;
+  width: 4cm;
+  height: 10mm;
+  line-height: 10mm;
+  background: #ffffff;
+  color:dimgrey;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+nav > nav-item:hover {
+  color:#a2a2a2;
+}
+top-bar > .craft-logo {
+  position: absolute;
+  text-align: center;
+  left:0;
+  top:0;
+  width:66.5mm;
+  height:40mm;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 5px hsla(0, 0%, 10%, 0.2));
+  -webkit-filter: drop-shadow(0 2px 5px hsla(0, 0%, 10%, 0.2));
+  background-image: url("/images/crafter-logo.svg");
+  background-size: 90% 90%;
+  background-position: 2mm 2mm;
+  background-repeat: no-repeat;
+  z-index:1;
+}
 .main {
-  box-sizing: border-box;
   margin: 5px auto;
   overflow: auto;
-  width:96%;
+  width: 96%;
 }
 .main > grid-host > .nine {
-  margin-right:8px;
+  margin-right: 8px;
   margin-bottom: 10px;
 }
 .content {
-  box-sizing: border-box;
   width: 100%;
   height: 500px;
   padding: 5px;
-  background: hsl(120, 0%, 28%);
-  border-radius: 2px;
+  background: hsl(120, 0%, 50%);
+  border-radius: 1px;
 }
 .side-content {
-  box-sizing: border-box;
   display: inline-block;
   text-align: left;
   padding: 0 5px 0 5px;
   width: 100%;
-  background: hsl(120, 0%, 28%);
-  border-radius: 2px;
+  background: hsl(120, 0%, 50%);
+  border-radius: 1px;
 }
 .side-content > header {
   text-align: center;
   font-size: 1.1em;
+}
+@media all and (max-width: 550px) {
+  nav > nav-item {
+    width: 25mm;
+  }
+  account-widget {
+    min-width: 90%;
+    left:5%;
+    right:5%;
+  }
+}
+@media all and (max-width: 300px) {
+  nav > nav-item {
+    width: 20mm;
+  }
+  account-widget {
+    min-width: 96%;
+    height:480px;
+    left:2%;
+    right:2%;
+  }
 }

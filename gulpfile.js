@@ -16,18 +16,13 @@ gulp.task('browser-sync', () => {
     stream: false
   });
   setTimeout(() => browserSync.init({
-      // watch the following files; changes will be injected (css & images) or cause browser to refresh
-      files: ['public/**/*.*'],
+      files: ['public/**/*.*','./views/*'],
       notify: false,
-      // informs browser-sync to proxy our expressjs app which would run at the following location
-      proxy: 'http://localhost:3000',
-      // notice that the default port is 3000, which would clash with our Golang server
+      proxy: 'https://localhost:3000',
       port: 4000,
-    }), 550);
+  }), 550);
 });
 
-
 gulp.task('watchGO',['runGo'], () => gulp.watch(["./*.go", "./**/*.go"]).on("change", () => go.restart()));
-gulp.task('watchSource', () => gulp.watch(["./public/*", "./public/**/*" , './views/*'],['browser-sync']));
 
-gulp.task('default',['browser-sync','watchGO','watchSource']);
+gulp.task('default',['browser-sync','watchGO']);

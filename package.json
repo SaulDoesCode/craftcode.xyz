@@ -2,7 +2,7 @@
   "name": "craftcode.xyz",
   "version": "0.0.1",
   "description": "personal portfolio/blog",
-  "main": "craftcode.xyz.js",
+  "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

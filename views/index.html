@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <meta charset="utf-8">
     <title>Craft Code</title>
-    <!--link href='https://fonts.googleapis.com/css?family=Roboto:400,300italic,400italic,500,500italic,700,700italic,900,900italic,300|Source+Code+Pro:400,500,300,600,700' rel='stylesheet' type='text/css' -->
-    <fetch-webcomponent src="/webcomponents/CrafterWidgets.wc" cache-component="true"></fetch-webcomponent>
+    <!--link href='https://fonts.googleapis.com/css?family=Roboto:400,300italic,400italic,500,500italic,700,700italic,300|Source+Code+Pro:400,500,300,600,700' rel='stylesheet' type='text/css' -->
+    <link rel="stylesheet" href="/css/fontello/css/fontello.css">
+    <link rel="stylesheet" href="/css/craftcode.css">
+    <fetch-webcomponent src="/webcomponents/CrafterWidgets.wc"></fetch-webcomponent>
     <script type="text/javascript" src="/js/polyfills.min.js"></script>
     <script type="text/javascript" src="/js/Crafter.js"></script>
     <script type="text/javascript" src="/js/craftcode.js"></script>
   </head>
   <body>
-    <div class="landing-welcome">
-      <header>{ Craft Code }</header>
-    </div>
+    <top-bar>
+      <div class="craft-logo"></div>
+      <nav>
+        <nav-item ripple="rgba(23, 154, 167, 0.45)" color-accent="rgb(23, 154, 167)" link="#about">About me</nav-item>
+        <nav-item ripple="rgba(210, 18, 64, 0.45)" color-accent="rgb(210, 18, 64)" link="#code">Code</nav-item>
+        <nav-item ripple="rgba(241, 208, 90,0.45)" color-accent="hsl(46, 84%, 50%)" link="#crafter.js">Crafter.js</nav-item>
+      </nav>
+    </top-bar>
     <main class="main">
       <grid-host>
         <div class="nine cols">
@@ -23,13 +31,14 @@
             <header>Posts</header>
             <ul>
               <li>1</li>
-              <li>1</li>
-              <li>1</li>
-              <li>1</li>
+              <li>2</li>
+              <li>3</li>
+              <li>4</li>
             </ul>
           </div>
         </div>
       </grid-host>
     </main>
   </body>
+
 </html>

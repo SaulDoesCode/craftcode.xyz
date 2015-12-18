@@ -1,0 +1,10 @@
+#Folders
+bower_components
+node_modules
+certs
+private
+
+#FileTypes
+*.log
+*.exe
+*.pem
