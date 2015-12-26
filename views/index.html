@@ -7,12 +7,15 @@
     <!--link href='https://fonts.googleapis.com/css?family=Roboto:400,300italic,400italic,500,500italic,700,700italic,300|Source+Code+Pro:400,500,300,600,700' rel='stylesheet' type='text/css' -->
     <link rel="stylesheet" href="/css/fontello/css/fontello.css">
     <link rel="stylesheet" href="/css/craftcode.css">
-    <fetch-webcomponent src="/webcomponents/CrafterWidgets.wc"></fetch-webcomponent>
     <script type="text/javascript" src="/js/polyfills.min.js"></script>
     <script type="text/javascript" src="/js/Crafter.js"></script>
     <script type="text/javascript" src="/js/craftcode.js"></script>
   </head>
   <body>
+    <fetch-webcomponent src="/webcomponents/CrafterWidgets.wc"></fetch-webcomponent>
+    <noscript>
+      <div class="scriptless icon-emo-unhappy">CraftCode.xyz depends on JavaScript , please enable it.</div>
+    </noscript>
     <top-bar>
       <div class="craft-logo"></div>
       <nav>
@@ -21,23 +24,21 @@
         <nav-item ripple="rgba(241, 208, 90,0.45)" color-accent="hsl(46, 84%, 50%)" link="#crafter.js">Crafter.js</nav-item>
       </nav>
     </top-bar>
+    <context-menu scope="main">
+      <section>Account Settings</section>
+    </context-menu>
     <main class="main">
-      <grid-host>
-        <div class="nine cols">
-          <div class="content">Content</div>
-        </div>
-        <div class="three cols">
-          <div class="side-content">
-            <header>Posts</header>
-            <ul>
-              <li>1</li>
-              <li>2</li>
-              <li>3</li>
-              <li>4</li>
-            </ul>
+        <page-view name="#about">
+          <div class="biscuit-tall">
+
           </div>
-        </div>
-      </grid-host>
+        </page-view>
+        <page-view name="#crafter.js" src="/images/crafter-logo.svg">
+          <div class="biscuit"></div>
+        </page-view>
+        <page-view name="#code">
+          Hello from da ader side!!!
+        </page-view>
     </main>
   </body>
 

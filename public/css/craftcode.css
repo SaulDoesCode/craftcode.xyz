@@ -2,6 +2,11 @@
     font-family: Roboto;
     src: url('/fonts/Roboto/Roboto-Regular.ttf');
 }
+*::selection {
+  background:hsla(41, 65%, 54%, 0.5);
+  text-shadow: 0 1px 3px hsla(0, 0%, 10%, 0.5);
+  color:white;
+}
 * {
   box-sizing: border-box;
 }
@@ -9,6 +14,7 @@ html, body {
   /*font-family: 'Arial', sans-serif;*/
   font-family: Roboto;
   text-align: center;
+  overflow-x: hidden;
   color: white;
   width: 100%;
   height: 100%;
@@ -16,20 +22,50 @@ html, body {
   padding: 0;
   background: hsl(0, 0%, 95%);
 }
+.scriptless {
+  display:block !important;
+  position:fixed;
+  width: 100%;
+  height: 100%;
+  padding-top:25%;
+  font-size:3.3em;
+  background:#3c3c3c;
+  color: #fff;
+  z-index:5000;
+}
+.scriptless:before {
+  position: absolute;
+  top:1cm;
+  left:calc(50% - 2cm);
+  font-size:2.8em;
+  width:4cm;
+  height:4cm;
+  color:red;
+  text-shadow: 0 1px 3px rgb(22, 26, 29);
+}
 top-bar {
   position: relative;
   display: block;
   width: 100%;
-  height:5cm;
-  margin-bottom: 5px;
-  background:hsl(0, 0%, 25%);
+  height:11%;
+  font-size:1em;
+  background:hsl(0, 0%, 30%);
   box-shadow: 0 0 3px hsla(0, 0%, 10%, 0.5);
+  z-index: 1;
 }
 top-bar > nav {
   position: absolute;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  align-content: center;
+  justify-content:flex-end;
+  overflow: hidden;
   right: 0;
   bottom: 0;
-  height: 10mm;
+  height:30%;
+  min-height: 9mm;
+  font-size: 1em;
   width: 100%;
   background: #fff;
   -webkit-user-select: none;
@@ -38,16 +74,15 @@ top-bar > nav {
 }
 nav > nav-item {
   position: relative;
-  display: inline-block;
-  overflow: hidden;
+  flex:0 1 3.5cm;
+  display: inline-flex;
+  align-items: center;
+  align-content: center;
+  justify-content:center;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
-  float:right;
-  width: 4cm;
-  height: 10mm;
-  line-height: 10mm;
-  background: #ffffff;
+  height: 100%;
   color:dimgrey;
   cursor: pointer;
   transition: all 140ms ease;
@@ -72,13 +107,37 @@ top-bar > .craft-logo {
   z-index:1;
 }
 .main {
-  margin: 5px auto;
+  position: absolute;
   overflow: auto;
-  width: 96%;
+  display: block;
+  width: 100%;
+  height:calc(100% - 11%);
+  bottom:0;
+  color:dimgrey;
+  z-index: 0;
 }
-.main > grid-host > .nine {
-  margin-right: 8px;
-  margin-bottom: 10px;
+page-view {
+  position: absolute;
+  display:block;
+  overflow: auto;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  -webkit-pointer-events: none;
+  -moz-pointer-events: none;
+  pointer-events: none;
+  z-index: 0;
+  transition: all 160ms ease-out;
+}
+.main > page-view[active] {
+  opacity: 1;
+  -webkit-pointer-events: all;
+  -moz-pointer-events: all;
+  pointer-events: all;
+  z-index: 1;
 }
 .content {
   width: 100%;
@@ -99,24 +158,34 @@ top-bar > .craft-logo {
   text-align: center;
   font-size: 1.1em;
 }
-@media all and (max-width: 550px) {
-  nav > nav-item {
-    width: 25mm;
+@media all and (max-width: 600px) , all and (max-device-width:600px) {
+  top-bar {
+    height:14%;
   }
-  account-widget {
-    min-width: 90%;
-    left:5%;
-    right:5%;
+  top-bar > nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-content: center;
+    align-items:center;
+    height:40%;
+    z-index: 5;
+  }
+  nav > nav-item {
+    height:100%;
+    flex:1 1 auto;
+    font-size:1.2em;
+  }
+  .main {
+    height:86%;
   }
 }
-@media all and (max-width: 300px) {
+@media all and (max-device-width:550px) {
   nav > nav-item {
-    width: 20mm;
+    font-size:2.5em !important;
   }
-  account-widget {
-    min-width: 96%;
-    height:480px;
-    left:2%;
-    right:2%;
+  page-view {
+    font-size:2.2em;
   }
 }

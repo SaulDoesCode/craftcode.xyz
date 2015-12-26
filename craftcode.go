@@ -41,7 +41,24 @@ type User struct {
 	Hash     string        `bson:"Hash"`
 	Time     time.Time     `bson:"Time"`
 	Online   bool          `bson:"Online"`
+	Status   string        `bson:"Online,omitempty"`
 	Token    string        `bson:"Token"`
+}
+
+// Permissions : defines User/Admin/Moderator permisions
+type Permissions struct {
+	CreatePost bool `bson:"CreatePost,omitempty"`
+	DeletePost bool `bson:"DeletePost,omitempty"`
+	Ban        bool `bson:"Ban,omitempty"`
+	Moderate   bool `bson:"Moderate,omitempty"`
+	FullPerms  bool `bson:"FullPerms,omitempty"`
+}
+
+// Admin : defines a new Administrator
+type Admin struct {
+	ID       bson.ObjectId `bson:"_id"`
+	Username string        `bson:"Username"`
+	Perms    Permissions   `bson:"Perms"`
 }
 
 //var googleClientID = readFile("./private/google-key")
@@ -50,6 +67,7 @@ var jwtkey = readFile("./private/jwt.rsa")
 var jwtpubkey = readFile("./private/jwt.rsa.pub")
 
 func main() {
+
 	var srv http.Server
 	srv.Addr = ":3443"
 	http2.ConfigureServer(&srv, nil)
@@ -81,15 +99,23 @@ func main() {
 	check(err)
 	session.SetSafe(&mgo.Safe{})
 	defer session.Close()
-	//postbase := session.DB("craftcode").C("posts")
+	postbase := session.DB("craftcode").C("posts")
 	userbase := session.DB("craftcode").C("users")
 
-	uniqueValues := mgo.Index{
+	var admins []Admin
+	session.DB("craftcode").C("admins").Find(nil).All(&admins)
+
+	if postbase.EnsureIndex(mgo.Index{
+		Key:    []string{"title", "content"},
+		Unique: true,
+	}) != nil {
+		fmt.Printf("Duplicate Username Entry: %v\n", err)
+	}
+
+	if userbase.EnsureIndex(mgo.Index{
 		Key:    []string{"Username", "Email"},
 		Unique: true,
-	}
-	err = userbase.EnsureIndex(uniqueValues)
-	if err != nil {
+	}) != nil {
 		fmt.Printf("Duplicate Username Entry: %v\n", err)
 	}
 
@@ -105,7 +131,6 @@ func main() {
 		if strings.Contains(req.URL.Path, ".") {
 			fileMux.ServeHTTP(res, req)
 		} else if req.URL.Path == "/" {
-
 			res.Header().Set("Content-Type", "text/html")
 			readCopyServe("./views/index.html", res, req)
 		} else {
@@ -115,133 +140,117 @@ func main() {
 	}))
 
 	http.HandleFunc("/admin", func(res http.ResponseWriter, req *http.Request) {
-
-		var token string
-    var isAdmin = false
-		for _, cookie := range req.Cookies() {
-			if cookie.Name == "jwt" || cookie.Name == "JWT" {
-        fmt.Printf("\n Admin Accessed \n")
-        token = cookie.Value
-        if Token, _ := jwt.Parse(token, nil); Token != nil {
-          if Token.Claims["username"] != nil {
-            username := Token.Claims["username"].(string)
-            if username == "SaulDoesCode" {
-              isAdmin = true
-            }
-          }
-        }
-				break
-			}
-		}
-
-		if token != "" && tokenValid(token) && isAdmin {
+		if checkAdminStatus(req.Cookies(), admins) {
 			res.Header().Set("Content-Type", "text/html")
 			readCopyServe("./views/admin.html", res, req)
 		} else {
 			http.Redirect(res, req, "/", 303)
 		}
-
 	})
 
-	http.Handle("/post", websocket.Handler(func(ws *websocket.Conn) {
+	http.Handle("/admin-channel", websocket.Handler(func(ws *websocket.Conn) {
 		var err error
-		for {
-			var reply string
 
-			if err = websocket.Message.Receive(ws, &reply); err != nil {
-				fmt.Println("/post error -> " + err.Error())
-				break
-			}
+		if checkAdminStatus(ws.Request().Cookies(), admins) {
+			for {
 
-			fmt.Println("Received back from client: " + reply)
+				var responseJSON string
+				if err = websocket.Message.Receive(ws, &responseJSON); err != nil {
+					fmt.Println(err.Error())
+					break
+				}
 
-			msg := "Received:  " + reply
-			fmt.Println("Sending to client: " + msg)
+				parsed := parseJSON([]byte(responseJSON))
+				querytype := parsed.Path("querytype").Data().(string)
+				if querytype == "newpost" {
+					postbase.Insert(&Post{
+						id:          bson.NewObjectId(),
+						title:       parsed.Path("post.title").Data().(string),
+						content:     parsed.Path("post.content").Data().(string),
+						author:      parsed.Path("post.author").Data().(string),
+						description: parsed.Path("post.description").Data().(string),
+						created:     time.Now(),
+					})
+				} else if querytype == "editpost" {
 
-			if err = websocket.Message.Send(ws, msg); err != nil {
-				fmt.Println("Can't send")
-				break
+				} else if querytype == "newadmin" {
+					session.DB("craftcode").C("admins").Insert(&Admin{
+						Username: parsed.Path("admin.username").Data().(string),
+						Perms: Permissions{
+							CreatePost: parsed.Path("admin.perms.CreatePost").Data().(bool),
+							DeletePost: parsed.Path("admin.perms.DeletePost").Data().(bool),
+							Ban:        parsed.Path("admin.perms.Ban").Data().(bool),
+							Moderate:   parsed.Path("admin.perms.Moderate").Data().(bool),
+							FullPerms:  parsed.Path("admin.perms.FullPerms").Data().(bool),
+						},
+					})
+				}
+
+				if err = websocket.Message.Send(ws, responseJSON); err != nil {
+					fmt.Println("Can't send")
+					break
+				}
 			}
 		}
 	}))
 
 	http.Handle("/signup", websocket.Handler(func(ws *websocket.Conn) {
-
-		var err error
 		for {
 			var responseMap = make(map[string]string)
-      var reply string
+			var reply string
 
-			if err = websocket.Message.Receive(ws, &reply); err != nil {
-				fmt.Println("signup error -> " + err.Error())
-				break
-			}
+			websocket.Message.Receive(ws, &reply)
 
 			var token string
 			for _, cookie := range ws.Request().Cookies() {
-				if cookie.Name == "jwt" {
+				if cookie.Name == "jwt" || cookie.Name == "JWT" {
 					token = cookie.Value
 					break
 				}
 			}
 			if token != "" && tokenValid(token) {
-				if err = websocket.Message.Send(ws, "All ready Signed Up "); err != nil {
-					fmt.Println("Can't send" + err.Error())
-					break
-				}
+				websocket.Message.Send(ws, "All ready Signed Up ")
 			}
 
-		  success, msg := SignUp([]byte(reply), userbase)
-      if success == true {
-        responseMap["success"] = "true"
-      } else {
-        responseMap["success"] = "false"
-      }
-      responseMap["msg"] = msg
-
-      response, _ := json.Marshal(responseMap)
-
-			if err = websocket.Message.Send(ws, string(response)); err != nil {
-				fmt.Println("Can't send" + err.Error())
-				break
+			success, msg := SignUp([]byte(reply), userbase)
+			if success == true {
+				responseMap["success"] = "true"
+			} else {
+				responseMap["success"] = "false"
 			}
+			responseMap["msg"] = msg
+
+			response, _ := json.Marshal(responseMap)
+
+			websocket.Message.Send(ws, string(response))
+
 		}
 	}))
 
 	http.Handle("/queryonline", websocket.Handler(func(ws *websocket.Conn) {
-		var err error
-		for {
-			var reply string
-			var onoroff = false
-			if err = websocket.Message.Receive(ws, &reply); err != nil {
-				fmt.Println("signup error -> " + err.Error())
+		var token string
+		for _, cookie := range ws.Request().Cookies() {
+			if cookie.Name == "jwt" || cookie.Name == "JWT" {
+				token = cookie.Value
 				break
 			}
+		}
+		if tokenValid(token) {
+			for {
+				var reply string
+				websocket.Message.Receive(ws, &reply)
 
-			if reply == "online" {
-				onoroff = true
-			}
-
-			var username string
-			var Token string
-			for _, cookie := range ws.Request().Cookies() {
-				if cookie.Name == "jwt" {
-					Token = cookie.Value
-					break
+				username := getUsernameFromJWT(ws.Request().Cookies())
+				if reply != "" {
+					userbase.Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"Online": true, "Status": reply}})
+				} else if reply == "offline" {
+					fmt.Printf("User went Offline")
+					userbase.Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"Online": false, "Status": "Offline"}})
+				} else {
+					userbase.Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"Online": true, "Status": "Online"}})
 				}
-			}
 
-			token, terr := jwt.Parse(Token, func(token *jwt.Token) (interface{}, error) {
-				username = token.Header["username"].(string)
-				return []byte(jwtkey), nil
-			})
-			if terr == nil && token.Valid {
-        userbase.Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"Online": onoroff} })
-				break
-			}
-			if err = websocket.Message.Send(ws, "invalid"); err != nil {
-				fmt.Println("Can't send" + err.Error())
-				break
+				websocket.Message.Send(ws, "status set")
 			}
 		}
 	}))
@@ -256,14 +265,14 @@ func main() {
 			success, token, username := SignIn(requestData, userbase)
 			if success {
 				responseMap["msg"] = "Welcome " + username + " successfully Signed in"
-        responseMap["username"] = username
-        responseMap["success"] = "true"
-        fmt.Printf(token)
-        cookie := http.Cookie{Name: "JWT", Value: token, Expires: time.Now().Add(time.Hour * 54), HttpOnly: true, MaxAge: 50000, Path: "/"}
-        http.SetCookie(res, &cookie)
+				responseMap["username"] = username
+				responseMap["success"] = "true"
+				fmt.Printf(token)
+				cookie := http.Cookie{Name: "JWT", Value: token, Expires: time.Now().Add(100 * 24 * time.Hour), HttpOnly: true, MaxAge: 0, Path: "/"}
+				http.SetCookie(res, &cookie)
 				//userbase.Find(bson.M{"Username" : username}).One(bson.M{"ProfilePic" :})
 			} else {
-        responseMap["success"] = "false"
+				responseMap["success"] = "false"
 				if token == "404" {
 					responseMap["msg"] = "User " + username + " not found on system please check your details or sign up"
 				} else {
@@ -290,10 +299,10 @@ func main() {
 
 	// Listen on Chosen Port and check for errors
 	//errHTTP := http.ListenAndServeTLS(":3000","./private/server-cert.pem", "./private/server-key.pem", nil)
-	log.Fatal(srv.ListenAndServeTLS("./private/server-cert.pem", "./private/server-key.pem"))
+	log.Fatal(srv.ListenAndServeTLS("./private/craftcode.crt", "./private/craftcode.key"))
 	//errHTTP := http.ListenAndServe(":3000", nil)
 	//check(errHTTP)
-	fmt.Println("Server Running on port 3000")
+	fmt.Println("Server Running on port 3443")
 }
 
 // SignUp : creates a new user entry
@@ -337,10 +346,58 @@ func SignIn(userJSON []byte, userbase *mgo.Collection) (bool, string, string) {
 	pass := []byte(jsonParsed.Path("Password").Data().(string))
 
 	if bcrypt.CompareHashAndPassword(hash, pass) == nil {
-		userbase.Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"LastSignIn": time.Now()} })
-		return true, makeToken(user), username
+		if tokenValid(user.Token) {
+			userbase.Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"LastSignIn": time.Now()}})
+			return true, user.Token, username
+		}
+		newtoken := makeToken(user)
+		userbase.Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"LastSignIn": time.Now(), "Token": newtoken}})
+		return true, newtoken, username
 	}
-	return false, " ", username
+	return false, "", username
+}
+
+func getUsernameFromJWT(cookies []*http.Cookie) string {
+	var username string
+	for _, cookie := range cookies {
+		if cookie.Name == "jwt" || cookie.Name == "JWT" {
+			token := cookie.Value
+			if Token, _ := jwt.Parse(token, nil); Token != nil {
+				if Token.Claims["username"] != nil {
+					username = Token.Claims["username"].(string)
+				}
+			}
+			break
+		}
+	}
+	return username
+}
+
+func checkAdminStatus(cookies []*http.Cookie, admins []Admin) bool {
+	var isAdmin = false
+	var token string
+	for _, cookie := range cookies {
+		if cookie.Name == "jwt" || cookie.Name == "JWT" {
+			fmt.Printf("\n Admin Accessed \n")
+			token = cookie.Value
+			if Token, _ := jwt.Parse(token, nil); Token != nil {
+				if Token.Claims["username"] != nil {
+					username := Token.Claims["username"].(string)
+					if username == "SaulDoesCode" {
+						isAdmin = true
+					} else {
+						for _, admin := range admins {
+							if username == admin.Username {
+								isAdmin = true
+							}
+						}
+					}
+				}
+			}
+			break
+		}
+	}
+	return isAdmin && tokenValid(token)
 }
 
 func getUser(usernameOrEmail string, userbase *mgo.Collection) (User, error) {
@@ -351,9 +408,9 @@ func getUser(usernameOrEmail string, userbase *mgo.Collection) (User, error) {
 	} else {
 		err = userbase.Find(bson.M{"Username": usernameOrEmail}).One(&result)
 	}
-  if err != nil {
-    fmt.Printf(err.Error())
-  }
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
 	return result, err
 }
 func tokenValid(Token string) bool {

@@ -5,11 +5,35 @@
     <title>Craft Code Admin Panel</title>
     <fetch-webcomponent src="/webcomponents/CrafterWidgets.wc"></fetch-webcomponent>
     <fetch-webcomponent src="/webcomponents/SideBar.wc"></fetch-webcomponent>
+    <fetch-webcomponent src="/webcomponents/writer-kit.wc"></fetch-webcomponent>
+    <link rel="stylesheet" href="/css/fontello/css/fontello.css">
+    <link rel="stylesheet" href="/css/admin.css">
     <script type="text/javascript" src="/js/polyfills.min.js"></script>
     <script type="text/javascript" src="/js/Crafter.js"></script>
     <script type="text/javascript" src="/js/admin.js"></script>
   </head>
   <body>
-
+    <side-bar hidden>
+      <sidebar-mainheading>Admin Panel</sidebar-mainheading>
+      <sidebar-accordion>
+        <sidebar-heading ripple="rgb(210, 12, 83)">Manage Posts<sidebar-icon class="icon-docs"></sidebar-icon></sidebar-heading>
+        <sidebar-item link="#new-post">new Post</sidebar-item>
+        <sidebar-item>see Posts</sidebar-item>
+        <sidebar-item>Delete/Download Posts</sidebar-item>
+      </sidebar-accordion>
+      <sidebar-heading ripple="rgb(219, 157, 52)">Manage Users<sidebar-icon class="icon-group"></sidebar-icon></sidebar-heading>
+      <sidebar-heading ripple="rgb(181, 219, 27)">Analytics<sidebar-icon class="icon-exchange"></sidebar-icon></sidebar-heading>
+    </side-bar>
+    <div class="sidebar-toggle icon-arrow"></div>
+    <main>
+      <info-bar>
+      </info-bar>
+      <div class="writing-space">
+        <writing-block writer-id="newpost"></writing-block>
+      </div>
+      <div class="writing-space">
+        <writer-preview writer-id="newpost"></writer-preview>
+      </div>
+    </main>
   </body>
 </html>

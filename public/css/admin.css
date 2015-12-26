@@ -14,5 +14,49 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background: hsl(0, 0%, 30%);
+  background: hsl(0, 0%, 40%);
+}
+main {
+  position: absolute;
+  display: block;
+  right:0;
+  left:0;
+  top:0;
+  transition: all 160ms ease-out;
+}
+.sidebar-toggle {
+  position: fixed;
+  cursor: pointer;
+  width:8mm;
+  height:8mm;
+  border-radius: 100%;
+  background: #fff;
+  top:2mm;
+  left:10px;
+  z-index: 100;
+  transition:all 160ms ease;
+}
+info-bar {
+  position: relative;
+  display: block;
+  margin: 10px auto;
+  border-radius: 2px;
+  width:85%;
+  min-width: 480px;
+  max-width: 975px;
+  height:40mm;
+  background:#fff;
+  box-shadow: 0 0 6px hsla(0, 0%, 15%, 0.42);
+}
+.writing-space {
+  position: relative;
+  display: inline-block;
+  overflow:hidden;
+  min-width: 460px;
+  width:45%;
+  margin:5px;
+  height:520px;
+  border-radius:3px;
+  background:#fff;
+  color:#615f5f;
 }
