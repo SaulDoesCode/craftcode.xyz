@@ -18,12 +18,15 @@
     transition: all 200ms ease;
     z-index: 3;
   }
+
   account-toggle:before {
     margin: 0 !important;
   }
+
   account-toggle:hover {
     color: #ba2222;
   }
+
   account-widget {
     position: absolute;
     display: block;
@@ -52,6 +55,7 @@
     transition: all 150ms ease;
     transition-delay: 50ms;
   }
+
   account-widget[open] {
     opacity: 1;
     pointer-events: all;
@@ -60,16 +64,19 @@
     z-index: 5;
     height: auto;
   }
+
   account-widget > toggle-button {
     position: absolute;
     left: 2mm;
     top: 2mm;
   }
+
   account-widget > .type {
     position: absolute;
     left: 16mm;
     top: 2mm;
   }
+
   account-widget > .form-message {
     position: absolute;
     text-align: center;
@@ -80,23 +87,28 @@
     color: rgb(205, 29, 29);
     text-shadow: 0 1px 2px hsla(0, 0%, 26%, 0.54);
   }
+
   account-widget > sign-in,
   account-widget > sign-up {
     text-align: center;
     position: relative;
     display: none;
     width: 100%;
+    height: 0;
     margin-top: 1cm;
     transition: all 150ms ease;
   }
-  account-widget[state='sign-in'] > sign-in {
+
+  account-widget[state='false'] > sign-in {
     display: block;
     height: 300px;
   }
-  account-widget[state='sign-up'] > sign-up {
+
+  account-widget[state='true'] > sign-up {
     display: block;
     height: 420px;
   }
+
   sign-in > input,
   sign-up > input {
     position: relative;
@@ -110,19 +122,23 @@
     padding-left: 4px;
     box-shadow: 0 0 4px hsla(0, 0%, 20%, 0.34);
   }
+
   sign-in > input:focus,
   sign-up > input:focus {
     border-right: 3px solid dimgrey;
   }
+
   sign-in > input:invalid,
   sign-up > input:invalid {
     border-color: red !important;
   }
+
   .account-widget-state {
     position: absolute;
     top: 1.5mm;
     left: 14mm;
   }
+
   .sign-in-button {
     position: relative;
     cursor: pointer;
@@ -140,16 +156,19 @@
     background: hsl(0, 0%, 99.6%);
     transition: all 150ms ease;
   }
+
   .sign-in-button:hover {
     box-shadow: 0 0 3px hsla(0, 0%, 10%, 0.3);
     border: 1px solid green;
   }
+
   .sign-in-button:active,
   .sign-in-button:focus {
     border: 1px solid hsl(0, 0%, 95%);
     text-shadow: 0 1px 2px hsla(0, 0%, 20%, 0.5);
     box-shadow: inset 0 0 8px hsla(0, 0%, 20%, 0.34), 0 1px 4px hsla(0, 0%, 20%, 0.34);
   }
+
   sign-in > span,
   sign-up > span {
     position: relative;
@@ -162,12 +181,14 @@
     text-align: center;
     font-size: 0.9em;
   }
+
   account-widget > * > google-button,
   account-widget > * > github-button {
     position: relative;
     display: inline-block;
     margin: 2%;
   }
+
   account-widget > .close {
     position: absolute;
     cursor: pointer;
@@ -180,9 +201,11 @@
     line-height: 8mm;
     font-size: 1.5em;
   }
+
   account-widget > .close:hover {
     text-shadow: 0 1px 3px rgba(60, 61, 60, 0.31);
   }
+
   google-button,
   github-button {
     display: block;
@@ -196,6 +219,7 @@
     padding: 0 5mm 0 0;
     box-shadow: 0 1px 3px hsla(0, 0%, 18%, 0.24), 0 0 3px hsla(0, 0%, 18%, 0.14);
   }
+
   google-button {
     color: #7a7777;
     background-color: white;
@@ -206,19 +230,23 @@
     box-shadow: 0 2px 4px hsla(0, 0%, 18%, 0.24);
     transition: all 150ms ease;
   }
+
   google-button:active {
     background-color: hsl(0, 0%, 99%);
     box-shadow: 0 0 4px hsla(0, 0%, 18%, 0.24);
   }
+
   github-button {
     color: white;
     box-shadow: 0 1px 3px hsla(0, 0%, 18%, 0.24), 0 0 3px hsla(0, 0%, 18%, 0.14);
     background-color: hsl(0, 0%, 30%);
     transition: all 150ms ease;
   }
+
   github-button:active {
     background-color: hsl(0, 0%, 50%);
   }
+
   github-button:before {
     position: absolute;
     left: 5px;
@@ -227,24 +255,28 @@
     font-size: 1.5em;
     content: '\eed7';
   }
+
   @media all and (max-width: 550px) {
     account-widget {
-      top:20%;
+      top: 20%;
       min-width: 90%;
       left: 5%;
     }
   }
+
   @media all and (max-device-width:550px) {
-      account-toggle {
-        position:absolute;
-        transform: scale(2.3) translateX(-16px) translateY(120px);
-      }
-      account-widget {
-        top:30%;
-        transform: scale(2.3);
-      }
+    account-toggle {
+      position: absolute;
+      transform: scale(2.3) translateX(-16px) translateY(120px);
+    }
+    account-widget {
+      top: 30%;
+      transform: scale(2.3);
+    }
   }
-  @media all and (max-width: 300px), all and (max-device-width:300px) {
+
+  @media all and (max-width: 300px),
+  all and (max-device-width:300px) {
     account-widget {
       min-width: 96%;
       height: 480px;
@@ -255,23 +287,23 @@
 <account-toggle class="icon-feather" tooltip="Sign In" tooltip-direction="left"></account-toggle>
 <account-widget>
   <toggle-button></toggle-button>
-  <div class="account-widget-state" view-bind="account-widget-state">Sign In</div>
-  <div class="form-message" view-bind="form-state"></div>
+  <div class="account-widget-state" bind="AccountWidgetToggle">Sign In</div>
+  <div class="form-message" bind="FormState"></div>
   <div class="close">X</div>
   <sign-in>
-    <input type="text" required name="username" placeholder="Username or Email" input-bind="UorE">
-    <input type="password" required name="password" minlength="8" maxlength="40" placeholder="Password" input-bind="Pass">
+    <input type="text" required name="username" autocomplete="username" placeholder="Username or Email">
+    <input type="password" required name="password" autocomplete="password" minlength="8" placeholder="Password">
     <div class="sign-in-button">GO</div>
     <span>Or Connect With</span>
     <google-button></google-button>
     <github-button></github-button>
   </sign-in>
   <sign-up>
-    <input type="text" name="username" placeholder="Username" input-bind="Username">
-    <input type="email" name="email" placeholder="Email" input-bind="Email">
-    <input type="text" name="name" placeholder="Name" input-bind="Name">
-    <input type="password" name="password" minlength="8" maxlength="40" placeholder="Password" input-bind="Password">
-    <input type="password" name="re-password" minlength="8" maxlength="40" placeholder="Re-enter password" input-bind="RePassword">
+    <input type="text" name="username" required placeholder="Username">
+    <input type="email" name="email" required placeholder="Email" input-bind="SignUp.email">
+    <input type="text" name="name" required placeholder="Name" input-bind="SignUp.name">
+    <input type="password" required name="password" minlength="8" maxlength="40" placeholder="Password" input-bind="SignUp.password">
+    <input type="password" required name="re-password" minlength="8" maxlength="40" placeholder="Re-enter password" input-bind="SignUp.re_password">
     <div class="sign-in-button">GO</div>
     <span>Or Connect With</span>
     <google-button></google-button>

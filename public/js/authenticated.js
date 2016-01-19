@@ -10,6 +10,8 @@ dom('[crafterstyles]').append(`
     right:5px;
     background: #fff;
     border-radius: 3px;
+    border-width:1px;
+    border-style:solid;
     width:180px;
     height:45%;
     z-index: 10;
@@ -26,35 +28,52 @@ dom('[crafterstyles]').append(`
     text-shadow:0 1px 2px hsla(0, 0%, 10%, 0.3);
   }
   user-widget[status="online"] {
-    border:2px solid #2cbd01;
+    border-color:#2cbd01;
+  }
+  user-widget[status="away"] {
+    border-color:#f0ae1a;
   }
 `);
 
 Craft.newComponent('user-widget',{
   inserted() {
-    dom('.username',this).html(Craft.Scope.auth.username);
-    let status = 'online', queryOnline = new CraftSocket('wss://192.168.10.108:3443/queryonline');
-    queryOnline.send(status,res => {
-      console.log(res);
-      setTimeout(() => queryOnline.close(), 500);
-    });
+    dom('.username',this).html(Craft.getBind('auth').username);
+  },
+  attr(name,oval,nval) {
+    if(name === 'status' && oval !== nval) {
+
+    }
   },
   destroyed() {
 
   }
 });
+Craft.scope.awaycheckers = {};
 
-On('blur', e => Craft.tabActive = false);
-On('focus', e => Craft.tabActive = true);
+On('blur',e => {
+  Craft.scope.awaycheckers.timer = setTimeout(() => {
+    if(Craft.getBind('auth.status') === 'away') {
+      Scope.queryOnline.send('online', res => {
+        Craft.setBind('auth',JSON.parse(res));
+      });
+    }
+  }, 120000);
 
-window.onbeforeunload = () => {
-    let queryOnline = new CraftSocket('wss://192.168.10.108:3443/queryonline');
-    queryOnline.send('offline',res => {
-      console.log('offline');
-      setTimeout(() => queryOnline.close(), 50);
-      window.onbeforeunload = null;
-    });
-  //return "setting status to offline";
-}
+  Craft.scope.awaycheckers.ticker = setInterval(() => {
+    if(Craft.tabActive === true) {
+      Craft.setBind('auth.status','online');
+      clearInterval(Craft.scope.awaycheckers.ticker);
+      clearTimeout(Craft.scope.awaycheckers.timer);
+    } else Craft.setBind('auth.status','away');
+  }, 5000);
+});
+
+On('focus', e => {
+  if(is.Def(Craft.scope.awaycheckers.ticker,Craft.scope.timer)) {
+    clearInterval(Craft.scope.awaycheckers.ticker);
+    clearTimeout(Craft.scope.awaycheckers.timer);
+  }
+});
+
 
 dom('top-bar').append(Craft.make_element('user-widget',dom().div('','class=username'),true));

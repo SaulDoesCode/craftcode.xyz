@@ -1,14 +1,6 @@
-var go,
-gulp = require('gulp'),
-gulpgo = require('gulp-go'),
+let gulp = require('gulp'),
 browserSync = require('browser-sync');
 
-gulp.task("runGo", () => {
-  go = gulpgo.run("craftcode.go", {
-    cwd: __dirname,
-    stdio: 'inherit'
-  })
-});
 
 gulp.task('browser-sync', () => {
 
@@ -23,6 +15,5 @@ gulp.task('browser-sync', () => {
   }), 550);
 });
 
-gulp.task('watchGO',['runGo'], () => gulp.watch(["./*.go", "./**/*.go"]).on("change", () => go.restart()));
 
-gulp.task('default',['browser-sync','watchGO']);
+gulp.task('default',['browser-sync']);

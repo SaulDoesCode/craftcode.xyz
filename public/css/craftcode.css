@@ -1,6 +1,6 @@
 @font-face {
     font-family: Roboto;
-    src: url('/fonts/Roboto/Roboto-Regular.ttf');
+    src: url('/src/fonts/Roboto/Roboto-Regular.ttf');
 }
 *::selection {
   background:hsla(41, 65%, 54%, 0.5);
@@ -95,13 +95,14 @@ top-bar > .craft-logo {
   text-align: center;
   left:0;
   top:0;
-  width:66.5mm;
-  height:40mm;
+  width:200px;
+  height:100px;
   pointer-events: none;
-  filter: drop-shadow(0 2px 5px hsla(0, 0%, 10%, 0.2));
   -webkit-filter: drop-shadow(0 2px 5px hsla(0, 0%, 10%, 0.2));
-  background-image: url("/images/crafter-logo.svg");
-  background-size: 90% 90%;
+  -moz-filter: drop-shadow(0 2px 5px hsla(0, 0%, 10%, 0.2));
+  filter: drop-shadow(0 2px 5px hsla(0, 0%, 10%, 0.2));
+  background-image: url("/src/images/crafter-logo.svg");
+  background-size: 80% 80%;
   background-position: 2mm 2mm;
   background-repeat: no-repeat;
   z-index:1;

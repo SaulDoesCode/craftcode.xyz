@@ -1,7 +1,7 @@
 #Folders
 bower_components
 node_modules
-certs
+bin
 private
 
 #FileTypes
